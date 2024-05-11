@@ -27,7 +27,6 @@ public class AuthenticationController {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Validated AuthenticationDTO data) {
         User user = userService.findByEmail(data.email());
