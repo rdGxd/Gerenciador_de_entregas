@@ -1,11 +1,5 @@
 package com.gerenciador.de.entregas.backend.controllers;
 
-import com.gerenciador.de.entregas.backend.config.security.TokenService;
-import com.gerenciador.de.entregas.backend.dtos.AuthenticationDTO;
-import com.gerenciador.de.entregas.backend.dtos.LoginResponseDTO;
-import com.gerenciador.de.entregas.backend.dtos.RegisterDTO;
-import com.gerenciador.de.entregas.backend.models.user.User;
-import com.gerenciador.de.entregas.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -13,6 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.gerenciador.de.entregas.backend.config.security.TokenService;
+import com.gerenciador.de.entregas.backend.dtos.AuthenticationDTO;
+import com.gerenciador.de.entregas.backend.dtos.LoginResponseDTO;
+import com.gerenciador.de.entregas.backend.dtos.RegisterDTO;
+import com.gerenciador.de.entregas.backend.models.user.User;
+import com.gerenciador.de.entregas.backend.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
@@ -39,9 +40,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Validated RegisterDTO data) {
-        if (userService.createUser(data)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+        userService.createUser(data);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,11 +1,15 @@
 package com.gerenciador.de.entregas.backend.models.user;
 
+import com.gerenciador.de.entregas.backend.models.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,8 +32,19 @@ public class User implements UserDetails {
     private String password;
 
     @NonNull
+    @CreationTimestamp
+    private String createdAT;
+
+    @NonNull
+    @UpdateTimestamp
+    private String updatedAT;
+
+    @NonNull
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Product> products = new ArrayList<>();
 
 
     public User(@NonNull String name, @NonNull String email, @NonNull String password, @NonNull UserRole role) {
@@ -50,7 +65,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return getName();
     }
 
     @Override
