@@ -87,7 +87,7 @@ public class UserService {
         Optional<User> user = userRepository.findByEmail(data.email());
 
         if (user.isPresent() || data.email().length() < 3 || data.email().length() > 16 || data.password().length() < 6 || data.password().length() > 16) {
-            throw new RuntimeException();
+            throw new RuntimeException("DEU RUIM 3");
         }
 
         try {

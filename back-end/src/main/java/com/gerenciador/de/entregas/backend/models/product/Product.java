@@ -1,12 +1,22 @@
 package com.gerenciador.de.entregas.backend.models.product;
 
-import com.gerenciador.de.entregas.backend.models.user.User;
-import jakarta.persistence.*;
-import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gerenciador.de.entregas.backend.models.user.User;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
@@ -25,12 +35,21 @@ public class Product {
 
     @NonNull
     @CreationTimestamp
-    private Date createdAT;
+    private String createdAT;
     @NonNull
     @UpdateTimestamp
-    private Date updatedAT;
+    private String updatedAT;
 
+    @JsonIgnore
     @NonNull
     @ManyToOne
     private User user;
+
+    public Product(String name, String codigo, User user) {
+        this.name = name;
+        this.codigo = codigo;
+        this.user = user;
+    }
+
+
 }

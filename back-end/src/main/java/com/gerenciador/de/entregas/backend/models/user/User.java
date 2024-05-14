@@ -1,17 +1,33 @@
 package com.gerenciador.de.entregas.backend.models.user;
 
-import com.gerenciador.de.entregas.backend.models.product.Product;
-import jakarta.persistence.*;
-import lombok.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gerenciador.de.entregas.backend.models.product.Product;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tb_user")
@@ -64,26 +80,31 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return getName();
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
