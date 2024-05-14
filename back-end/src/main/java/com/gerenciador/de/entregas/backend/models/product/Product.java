@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -24,6 +25,7 @@ import lombok.Setter;
 @Table(name = "tb_product")
 @Getter
 @Setter
+@EqualsAndHashCode(of = "id")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,8 +43,8 @@ public class Product {
     private String updatedAT;
 
     @JsonIgnore
-    @NonNull
     @ManyToOne
+    @NonNull
     private User user;
 
     public Product(String name, String codigo, User user) {

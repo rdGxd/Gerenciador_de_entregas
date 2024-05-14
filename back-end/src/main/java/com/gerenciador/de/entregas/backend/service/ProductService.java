@@ -11,6 +11,8 @@ import com.gerenciador.de.entregas.backend.models.product.Product;
 import com.gerenciador.de.entregas.backend.models.user.User;
 import com.gerenciador.de.entregas.backend.models.user.UserRole;
 import com.gerenciador.de.entregas.backend.repository.ProductRepository;
+import com.gerenciador.de.entregas.backend.service.exceptions.DatabaseException;
+import com.gerenciador.de.entregas.backend.service.exceptions.ResourceNotFoundException;
 
 @Service
 public class ProductService {
@@ -21,7 +23,11 @@ public class ProductService {
   JdbcTemplate jdbcTemplate;
 
   public List<Product> findAll(String id) {
-    return productRepository.findAllByUser_Id(id);
+    try {
+      return productRepository.findAllByUser_Id(id);
+    } catch (Exception e) {
+      throw new RuntimeException(e.getMessage());
+    }
   }
 
   public Product findById(String id, User user) {
@@ -30,23 +36,44 @@ public class ProductService {
         return productRepository.findById(id).get();
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      throw new ResourceNotFoundException(id);
     }
     return null;
   }
 
-  public void insert(Product product) {
-    productRepository.save(product);
+  public Product insert(Product product) {
+    try {
+      return productRepository.save(product);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException(e.getMessage());
+    }
   }
 
-  public void update(String id, User user, ProductDTO dto) {
+  public Product update(String id, User user, ProductDTO dto) {
     try {
       Product product = findById(id, user);
-      updateData(product, dto);
-      productRepository.save(product);
+      if (updateData(product, dto)) {
+        return productRepository.save(product);
+      }
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
+    return null;
+  }
+
+  public boolean updateData(Product product, ProductDTO dto) {
+    boolean changeProduct = false;
+
+    if (dto.name() != null && !dto.name().isBlank()) {
+      product.setName(dto.name());
+      changeProduct = true;
+    }
+    if (dto.codigo() != null && !dto.codigo().isBlank()) {
+      product.setCodigo(dto.codigo());
+      changeProduct = true;
+    }
+
+    return changeProduct;
   }
 
   public void delete(String id, User user) {
@@ -57,28 +84,15 @@ public class ProductService {
         productRepository.delete(product);
       }
     } catch (Exception e) {
-      throw new RuntimeException(e.getMessage());
-    }
-  }
-
-  public void updateData(Product product, ProductDTO dto) {
-    if (dto.name() != null) {
-      product.setName(dto.name());
-    }
-    if (dto.codigo() != null) {
-      product.setCodigo(dto.codigo());
+      throw new DatabaseException(e.getMessage());
     }
   }
 
   public boolean verifyUserAndRole(String id, User user) {
-    // Verifica se o link com o ID fornecido existe
     if (productRepository.findById(id).isPresent()) {
-      // Obtém o usuário associado ao link
-      User linkUser = productRepository.findById(id).get().getUser();
-      // Verifica se o usuário é o proprietário do link ou se é um administrador
-      return linkUser.getId().equals(user.getId()) || linkUser.getRole().equals(UserRole.ADMIN);
+      User productUser = productRepository.findById(id).get().getUser();
+      return productUser.getId().equals(user.getId()) || user.getRole().equals(UserRole.ADMIN);
     }
-    // Retorna false se o link não for encontrado
     return false;
   }
 }

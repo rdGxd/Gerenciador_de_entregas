@@ -21,48 +21,56 @@ import com.gerenciador.de.entregas.backend.dtos.UserDTO;
 import com.gerenciador.de.entregas.backend.models.user.User;
 import com.gerenciador.de.entregas.backend.service.UserService;
 
-
-
-
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+  @Autowired
+  private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> findAll() {
-        List<User> users = userService.findAll();
-        List<UserDTO> newUsers = new ArrayList<>();
-        for (User newUser : users) {
-            newUsers.add(new UserDTO(newUser.getId(), newUser.getName(), newUser.getEmail(), newUser.getRole(), newUser.getCreatedAT(), newUser.getUpdatedAT(), newUser.getProducts()));
-        }
-        return ResponseEntity.ok().body(newUsers);
+  @GetMapping
+  public ResponseEntity<List<UserDTO>> findAll() {
+    List<User> users = userService.findAll();
+    List<UserDTO> newUsers = new ArrayList<>();
+    for (User newUser : users) {
+      newUsers.add(new UserDTO(newUser.getId(), newUser.getName(), newUser.getEmail(), newUser.getRole(),
+          newUser.getCreatedAT(), newUser.getUpdatedAT(), newUser.getProducts()));
     }
+    return ResponseEntity.ok().body(newUsers);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable String id) {
-      User user = userService.findById(id);
-      UserDTO userDTO = new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getCreatedAT(), user.getUpdatedAT(), user.getProducts());
-      return ResponseEntity.ok().body(userDTO);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<UserDTO> findById(@PathVariable String id) {
+    User user = userService.findById(id);
+    UserDTO userDTO = new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getCreatedAT(),
+        user.getUpdatedAT(), user.getProducts());
+    return ResponseEntity.ok().body(userDTO);
+  }
 
-    @PostMapping()
-    public ResponseEntity<Void> insert(@RequestBody @Validated RegisterDTO entity) {
-        userService.createUser(entity);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable String id, @RequestHeader("Authorization") String token, @RequestBody RegisterDTO userDTO) {
-      userService.updated(id, token, userDTO);
+  @PostMapping()
+  public ResponseEntity<Void> insert(@RequestBody @Validated RegisterDTO entity) {
+    if (userService.createUser(entity).getClass() == User.class) {
       return ResponseEntity.ok().build();
     }
+    ;
+    return ResponseEntity.badRequest().build();
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id, @RequestHeader("Authorization") String token) {
-      userService.delete(id, token);
+  @PutMapping("/{id}")
+  public ResponseEntity<Void> update(@PathVariable String id, @RequestHeader("Authorization") String token,
+      @RequestBody RegisterDTO userDTO) {
+    if (userDTO.name() == null && userDTO.email() == null) {
+      return ResponseEntity.badRequest().build();
+    }
+    if (userService.updated(id, token, userDTO).getClass() == User.class) {
       return ResponseEntity.ok().build();
     }
+    return ResponseEntity.badRequest().build();
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable String id, @RequestHeader("Authorization") String token) {
+    userService.delete(id, token);
+    return ResponseEntity.ok().build();
+  }
 }
