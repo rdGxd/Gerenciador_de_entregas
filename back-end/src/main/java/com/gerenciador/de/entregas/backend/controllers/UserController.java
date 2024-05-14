@@ -59,7 +59,7 @@ public class UserController {
   @PutMapping("/{id}")
   public ResponseEntity<Void> update(@PathVariable String id, @RequestHeader("Authorization") String token,
       @RequestBody RegisterDTO userDTO) {
-    if (userDTO.name() == null && userDTO.email() == null) {
+    if (userDTO.name() == null && userDTO.email() == null && userDTO.password() == null) {
       return ResponseEntity.badRequest().build();
     }
     if (userService.updated(id, token, userDTO).getClass() == User.class) {

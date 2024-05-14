@@ -68,10 +68,7 @@ public class UserService {
       user.setEmail(userDTO.email());
       updatedUser = true;
     }
-    if (userDTO.role().equals("ADMIN") || userDTO.role().equals("USER")) {
-      user.setRole(userDTO.role());
-      updatedUser = true;
-    }
+
     return updatedUser;
   }
 
