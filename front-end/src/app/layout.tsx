@@ -1,8 +1,8 @@
-import { ModeToggle } from "@/components/modeToggle";
 import { ThemeProvider } from "@/components/theme.provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../style/globals.css";
+import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ModeToggle />
+          <Header />
+
           {children}
         </ThemeProvider>
       </body>
