@@ -1,3 +1,5 @@
+import { ModeToggle } from "@/components/modeToggle";
+import { ThemeProvider } from "@/components/theme.provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../style/globals.css";
@@ -16,7 +18,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ModeToggle />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
